@@ -1,26 +1,53 @@
 package main;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public abstract class Algo {
-	protected ArrayList<Point2D> cities;
+import javax.swing.JOptionPane;
+
+public abstract class Algo extends Thread {
+	private int initialSize;
+	protected ArrayList<City> cities;
 	private double execTime;
 	
-	public Algo(ArrayList<Point2D> cities) {
-		this.cities = (ArrayList<Point2D>) cities.clone();
+	@SuppressWarnings("unchecked")
+	public Algo(ArrayList<City> cities) {
+		this.cities = (ArrayList<City>) cities.clone();
+		this.initialSize = cities.size();
 	}
 	
 	public double lastExecTime() { return execTime; }
 	
-	abstract ArrayList<Point2D> applyAlgo();
+	abstract ArrayList<City> applyAlgo();
 	
-	public ArrayList<Point2D> process() {
+	public ArrayList<City> process() throws InvalidSizeEx {
+		System.out.println("\n-------------------- "+this.getClass().getSimpleName()+" --------------------\n");
+		
 		long startTime = System.nanoTime();
-		ArrayList<Point2D> res = this.applyAlgo();
+		cities = this.applyAlgo();
 		execTime = (System.nanoTime()-startTime)/1000000.0;
 		
-		return res;
+		if (cities.size()!=initialSize) throw new InvalidSizeEx(initialSize,cities.size());
+		
+		return cities;
+	}
+	
+	public ArrayList<City> getCities() {
+		return cities;
+	}
+	
+	public void run() {
+		try {
+			this.process();
+
+			GUI.getInstance().update(this, cities);
+		} catch (InvalidSizeEx ex) {
+			JOptionPane.showMessageDialog(
+				null,
+				"Algorithm didn't return the right number of cities !\nExpected: "+ex.getExpectedSize()+"\nFound: "+ex.getFoundSize(),
+				"Invalid size !",
+				JOptionPane.ERROR_MESSAGE
+			);
+		}
 	}
 
 }

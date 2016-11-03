@@ -1,25 +1,24 @@
 package main;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class NearestNeighbour extends Algo {
 
-	public NearestNeighbour(ArrayList<Point2D> cities) {
+	public NearestNeighbour(ArrayList<City> cities) {
 		super(cities);
 	}
 
-	protected ArrayList<Point2D> applyAlgo() {
-		ArrayList<Point2D> res = new ArrayList<>();
+	protected ArrayList<City> applyAlgo() {
+		ArrayList<City> res = new ArrayList<>();
 		
-		Point2D currentCity = cities.get(0);
+		City currentCity = cities.get(0);
 		cities.remove(0);
+		res.add(currentCity);
 		
 		while (!cities.isEmpty()) {
-			res.add(currentCity);
 			double distance = Float.MAX_VALUE;
-			Point2D closest = currentCity; // Because we are forced to give an initial value
-			for (Point2D p : cities) {
+			City closest = currentCity; // Because we are forced to give an initial value
+			for (City p : cities) {
 				if (currentCity.distance(p) < distance) {
 					closest = p;
 					distance = currentCity.distance(p);
@@ -30,6 +29,6 @@ public class NearestNeighbour extends Algo {
 			currentCity = closest;
 		}
 		
-		return res;		
+		return res;
 	}
 }
