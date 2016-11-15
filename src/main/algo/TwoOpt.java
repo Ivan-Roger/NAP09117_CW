@@ -1,7 +1,10 @@
-package main;
+package main.algo;
 
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
+
+import main.City;
+import main.GUI;
+import main.TSPLib;
 
 public class TwoOpt extends Algo {
 
@@ -19,25 +22,24 @@ public class TwoOpt extends Algo {
 		do {
 			improvementMade = false;
 			for (int i=1; i<res.size()-1; i++) {
+				if (!doProcess) break;
 				for (int j=i+1; j<res.size()-1; j++) {
-					ArrayList<City> new_route = swap2Opt(res, i, j);
+					if (!doProcess) break;
+					
+					ArrayList<City> new_route = swapOpt(res, i, j);
 					double new_dist = TSPLib.routeLength(new_route);
 					if (new_dist<best_dist) {
 						res = new_route;
+						System.out.println("New dist: \t"+new_dist+"\t Improvement: "+(best_dist-new_dist));
 						best_dist = new_dist;
 						improvementMade = true;
-						System.out.println("Old dist: \t"+best_dist+"\t New dist: "+new_dist);
-						
-						/*try {
-							Thread.currentThread().sleep(250);
-						} catch (InterruptedException e) {e.printStackTrace();}*/
 						
 						GUI.getInstance().drawCities(res);
 					}
 				}
 			}
-			System.out.println("New loop.");
-		} while (improvementMade);
+			System.out.println("Finished loop.");
+		} while (improvementMade && doProcess);
 		
 		if (res.get(res.size()-1)==res.get(0)) {
 			res.remove(res.size()-1);
@@ -47,7 +49,7 @@ public class TwoOpt extends Algo {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private ArrayList<City> swap2Opt(ArrayList<City> in, int i, int j) {
+	public static ArrayList<City> swapOpt(ArrayList<City> in, int i, int j) {
 		ArrayList<City> out = (ArrayList<City>) in.clone();
 		
 		City tmp = out.get(i);

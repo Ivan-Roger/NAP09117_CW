@@ -1,13 +1,14 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class TSPLib {
 
-	public static ArrayList<City> load(String fName){
+	public static ArrayList<City> load(File tspFile){
 		//Load in a TSPLib instance. This example assumes that the Edge weight type //is EUC_2D.
 		//It will work for examples such as rl5915.tsp. Other files such as //fri26.tsp .To use a different format, you will have to
 		//modify the this code
@@ -18,7 +19,7 @@ public class TSPLib {
 			String currentLine;
 			int dimension =0;//Hold the dimension of the problem
 			boolean readingNodes = false;
-			br = new BufferedReader(new FileReader(fName));
+			br = new BufferedReader(new FileReader(tspFile));
 			while ((currentLine = br.readLine()) != null) {
 				lineID++;
 				//Read the file until the end;

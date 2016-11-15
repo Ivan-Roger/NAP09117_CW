@@ -1,6 +1,8 @@
-package main;
+package main.algo;
 
 import java.util.ArrayList;
+
+import main.City;
 
 public class NearestNeighbour extends Algo {
 
@@ -16,6 +18,8 @@ public class NearestNeighbour extends Algo {
 		res.add(currentCity);
 		
 		while (!cities.isEmpty()) {
+			if (!doProcess) break;
+			
 			double distance = Float.MAX_VALUE;
 			City closest = currentCity; // Because we are forced to give an initial value
 			for (City p : cities) {
