@@ -22,16 +22,18 @@ import javax.swing.Timer;
 
 import main.algo.Algo;
 import main.algo.NearestNeighbour;
-import main.algo.SolveIntersectOpt;
+import main.algo.SolveIntersect;
 import main.algo.TwoOpt;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
@@ -126,6 +128,7 @@ public class GUI extends JFrame {
 		JPanel controls = new JPanel();
 		controls.setLayout(new GridLayout(0,1));
 		controls.setBackground(Color.LIGHT_GRAY);
+		controls.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
 
 		// --- Datasets ---
 		ctrlAlgoP = new JPanel();
@@ -175,26 +178,13 @@ public class GUI extends JFrame {
 			}
 		});
 		ctrlAlgoP.add(btn_nn);
-		// Solve Intersections v0
-		/*
-		JButton btn_inn = new JButton("Solve Intersections");
-		btn_inn.setAlignmentX(CENTER_ALIGNMENT);
-		btn_inn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				algorithm = new SolveIntersect(cities);
-				processingStart();
-				algorithm.start();
-			}
-		});
-		ctrlAlgoP.add(btn_inn); // */
 		// Solve Intersections
 		JButton btn_intersect = new JButton("Solve Intersections");
 		btn_intersect.setAlignmentX(CENTER_ALIGNMENT);
 		btn_intersect.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				algorithm = new SolveIntersectOpt(cities);
+				algorithm = new SolveIntersect(cities);
 				processingStart();
 				algorithm.start();
 			}
@@ -269,13 +259,10 @@ public class GUI extends JFrame {
 	}
 	
 	class InfosPanel extends JPanel {
-		private JLabel info_nameDataset;
-		private JLabel info_nbCities;
-		private JLabel info_algo;
-		private JLabel info_time;
-		private JLabel info_routeLen;
-		private JLabel info_improvement;
-		private JLabel info_loading;
+		private JTextArea infoArea;
+		private JLabel infoLoading;
+		
+		private boolean isLoading = false;
 		
 		private String nameDataset;
 		private int nbCities;
@@ -285,42 +272,53 @@ public class GUI extends JFrame {
 		private double improvement;
 		
 		public InfosPanel() {
-			this.setLayout(new GridLayout(0,1));
+			this.setLayout(new BorderLayout());
 			this.setBackground(Color.LIGHT_GRAY);
-			this.add(new JLabel("Informations", JLabel.CENTER));
+			JLabel title = new JLabel("Informations", JLabel.CENTER);
+			this.add(title, BorderLayout.NORTH);
 			this.setPreferredSize(new Dimension(200,500));
+			this.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+			
 			// Infos
-			nameDataset = Main.dataFiles[problem].getName();
-			info_nameDataset = new JLabel("Dataset: "+nameDataset);
-			this.add(info_nameDataset);
-			
-			nbCities = cities.size();
-			info_nbCities = new JLabel("Nb. of cities: "+nbCities);
-			this.add(info_nbCities);
-			
-			nameAlgo = "none";
-			info_algo = new JLabel("Algorithm: "+nameAlgo);
-			this.add(info_algo);
-			
-			time = 0.0;
-			info_time = new JLabel("Processing time: "+time+"ms");
-			this.add(info_time);
-			
-			routeLength = TSPLib.routeLength(cities);
-			info_routeLen = new JLabel("Route length: "+routeLength);
-			this.add(info_routeLen);
-			
+			nameDataset = Main.dataFiles[problem].getName();			
+			nbCities = cities.size();			
+			nameAlgo = "none";			
+			time = 0.0;			
+			routeLength = TSPLib.routeLength(cities);			
 			improvement = 0;
-			info_improvement = new JLabel("Improvement: "+(improvement==0?"...":improvement));
-			this.add(info_improvement);
 			
-			info_loading = new JLabel("Processing ...", JLabel.CENTER);
-			info_loading.setVisible(false);
-			this.add(info_loading);
+			infoArea = new JTextArea();
+			infoArea.setText(this.getFullInfoString());
+			infoArea.setEditable(false);
+			infoArea.setBackground(Color.LIGHT_GRAY);
+			infoArea.setBorder(BorderFactory.createEmptyBorder(30, 5, 0, 5));
+			this.add(infoArea, BorderLayout.CENTER);
+			
+			infoLoading = new JLabel("Processing ...", JLabel.CENTER);
+			infoLoading.setVisible(false);
+			this.add(infoLoading, BorderLayout.SOUTH);
 		}
 
 		public String getInfoString() {
 			return nameDataset+"("+nbCities+")_"+nameAlgo;
+		}
+
+		public String getFullInfoString() {
+			SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss:SSS");
+            df.setTimeZone(TimeZone.getTimeZone("GMT"));
+            
+			String res = "";
+			res += "Dataset: "+nameDataset+"\n";
+			res += "Nb. of cities: "+nbCities+"\n";
+			res += "Algorithm: "+nameAlgo+"\n";
+			
+			if (!isLoading) {
+				res += "Processing time: "+df.format(time)+"\n";
+				res += "Route length: "+routeLength+"\n";
+				res += "Improvement: "+(improvement==0?"...":improvement);
+			}
+			
+			return res;
 		}
 
 		public void updateAlgo(Algo algo) {
@@ -328,37 +326,33 @@ public class GUI extends JFrame {
 				nameAlgo = algo.getClass().getSimpleName();
 				time = algo.lastExecTime();
 			} else {
-				nameAlgo = "none";
+				nameAlgo = "None";
 				time = 0.0;
 			}
-			info_algo.setText("Algorithm: "+nameAlgo);
-			info_time.setText("Processing time: "+time+"ms");
 			
 			double newRouteLength = TSPLib.routeLength(cities);
-			info_routeLen.setText("Route length: "+newRouteLength);
 			if (routeLength!=0) {
 				improvement = routeLength-newRouteLength;
-				info_improvement.setText("Improvement: "+(improvement==0?"...":improvement));
 			}
 			routeLength = newRouteLength;
+			
+			infoArea.setText(this.getFullInfoString());
 		}
 		
 		public void updateDataset() {
 			nameDataset = Main.dataFiles[problem].getName();
-			info_nameDataset.setText("Dataset: "+nameDataset);
 			nbCities = cities.size();
-			info_nbCities.setText("Nb. of cities: "+nbCities);
 			routeLength = TSPLib.routeLength(cities);
-			info_routeLen.setText("Route length: "+TSPLib.routeLength(cities));
 			improvement = 0;
-			info_improvement.setText("Improvement: "+(improvement==0?"...":improvement));
+			
+			infoArea.setText(this.getFullInfoString());
 		}
 		
 		public void setLoading(boolean loading) {
-			info_time.setVisible(!loading);
-			info_routeLen.setVisible(!loading);
-			info_improvement.setVisible(!loading);
-			info_loading.setVisible(loading);
+			isLoading = loading;
+			infoLoading.setVisible(loading);
+			
+			infoArea.setText(this.getFullInfoString());
 		}
 	}
 	
