@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import main.City;
 import main.GUI;
-import main.TSPLib;
 
 public class TwoOpt extends Algo {
 
@@ -17,7 +16,6 @@ public class TwoOpt extends Algo {
 		ArrayList<City> res = (ArrayList<City>) cities.clone();
 		//res.add(res.get(0));
 		
-		double best_dist = TSPLib.routeLength(res); 
 		boolean improvementMade;
 		do {
 			improvementMade = false;
@@ -26,12 +24,11 @@ public class TwoOpt extends Algo {
 				for (int j=i+1; j<res.size()-1; j++) {
 					if (!doProcess) break;
 					
-					ArrayList<City> new_route = swapOpt(res, i, j);
-					double new_dist = TSPLib.routeLength(new_route);
-					if (new_dist<best_dist) {
-						res = new_route;
-						System.out.println("New dist: \t"+new_dist+"\t Improvement: "+(best_dist-new_dist));
-						best_dist = new_dist;
+					double dist1 = res.get(i).distance(res.get(i+1)) + res.get(j).distance(res.get(j+1));
+					double dist2 = res.get(i).distance(res.get(j+1)) + res.get(j).distance(res.get(i+1));
+					if (dist2<dist1) {
+						res = swapOpt(res, i, j);
+						System.out.println("Swap: \t"+i+", "+j+"\t Improvement: "+(dist1-dist2));
 						improvementMade = true;
 						
 						GUI.getInstance().drawCities(res);
@@ -41,9 +38,10 @@ public class TwoOpt extends Algo {
 			System.out.println("Finished loop.");
 		} while (improvementMade && doProcess);
 		
+		/*  // Remove closing line
 		if (res.get(res.size()-1)==res.get(0)) {
 			res.remove(res.size()-1);
-		}
+		} //*/
 		
 		return res;
 	}
