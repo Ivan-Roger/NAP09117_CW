@@ -411,7 +411,8 @@ public class GUI extends JFrame {
 			// System.out.println("Cities: width="+origW+", height="+origH);
 			// System.out.println("Frame: width="+this.getWidth()+", height="+this.getHeight());
 			// System.out.println("Ratios: width="+ratioWidth+", height="+ratioHeight);
-			
+
+			g.setColor(new Color(72,128,232));
 			for (int i=1; i<cities.size(); i++) {
 				City c = cities.get(i);
 				int cX = (int) ((c.getX()-startX) * ratioWidth) + 13;
@@ -420,24 +421,30 @@ public class GUI extends JFrame {
 				City prevC = cities.get(i-1);
 				int prevX = (int) ((prevC.getX()-startX) * ratioWidth) + 13;
 				int prevY = (int) ((prevC.getY()-startY) * ratioHeight) + 23;
-				
-				g.setColor(Color.RED);
 				g.drawLine(prevX, prevY, cX, cY);
 			}
 			
-			for (int i=0; i<cities.size(); i++) {
+			g.setColor(new Color(44,44,255));
+			for (int i=1; i<cities.size()-1; i++) {
 				City c = cities.get(i);
 				int cX = (int) ((c.getX()-startX) * ratioWidth) + 13;
 				int cY = (int) ((c.getY()-startY) * ratioHeight) + 23;
-				
-				Color color = Color.BLUE;
-				if (i==0) color = Color.GREEN;
-				else if (i==cities.size()-1) color = Color.RED;
-				g.setColor(color);
 				g.fillOval(cX-3, cY-3, 6, 6);
 				if (cities.size()<250)
 					g.drawString(Integer.toString(c.getID()), cX, cY-6);
 			}
+
+			City c0 = cities.get(0);
+			int c0X = (int) ((c0.getX()-startX) * ratioWidth) + 13;
+			int c0Y = (int) ((c0.getY()-startY) * ratioHeight) + 23;
+			g.setColor(Color.GREEN);
+			g.fillOval(c0X-3, c0Y-3, 6, 6);
+			
+			City cL = cities.get(cities.size()-1);
+			int cLX = (int) ((cL.getX()-startX) * ratioWidth) + 13;
+			int cLY = (int) ((cL.getY()-startY) * ratioHeight) + 23;
+			g.setColor(Color.RED);
+			g.fillOval(cLX-3, cLY-3, 6, 6);
 		}
 	}
 }

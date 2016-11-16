@@ -14,7 +14,7 @@ public class TwoOpt extends Algo {
 	@SuppressWarnings("unchecked")
 	protected ArrayList<City> applyAlgo() {
 		ArrayList<City> res = (ArrayList<City>) cities.clone();
-		//res.add(res.get(0));
+		res.add(res.get(0));
 		
 		boolean improvementMade;
 		do {
@@ -24,11 +24,11 @@ public class TwoOpt extends Algo {
 				for (int j=i+1; j<res.size()-1; j++) {
 					if (!doProcess) break;
 					
-					double dist1 = res.get(i).distance(res.get(i+1)) + res.get(j).distance(res.get(j+1));
-					double dist2 = res.get(i).distance(res.get(j+1)) + res.get(j).distance(res.get(i+1));
-					if (dist2<dist1) {
+					double dist_old = res.get(i).distance(res.get(i+1)) + res.get(j).distance(res.get(j+1));
+					double dist_new = res.get(i).distance(res.get(j+1)) + res.get(j).distance(res.get(i+1));
+					if (dist_new<dist_old) {
 						res = swapOpt(res, i, j);
-						System.out.println("Swap: \t"+i+", "+j+"\t Improvement: "+(dist1-dist2));
+						System.out.println("Swap: \t"+i+", "+j+"\t Improvement: "+(dist_old-dist_new));
 						improvementMade = true;
 						
 						GUI.getInstance().drawCities(res);
@@ -38,7 +38,7 @@ public class TwoOpt extends Algo {
 			System.out.println("Finished loop.");
 		} while (improvementMade && doProcess);
 		
-		/*  // Remove closing line
+		//*  // Remove closing line
 		if (res.get(res.size()-1)==res.get(0)) {
 			res.remove(res.size()-1);
 		} //*/
