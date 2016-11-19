@@ -266,8 +266,7 @@ public class GUI extends JFrame {
 		
 		private String nameDataset;
 		private int nbCities;
-		private String nameAlgo;
-		private double time;
+		private Algo algo;
 		private double routeLength = 0;
 		private double improvement;
 		
@@ -281,10 +280,9 @@ public class GUI extends JFrame {
 			
 			// Infos
 			nameDataset = Main.dataFiles[problem].getName();			
-			nbCities = cities.size();			
-			nameAlgo = "none";			
-			time = 0.0;			
-			routeLength = TSPLib.routeLength(cities);			
+			nbCities = cities.size();
+			algo = null;
+			routeLength = TSPLib.routeLength(cities);
 			improvement = 0;
 			
 			infoArea = new JTextArea();
@@ -300,7 +298,7 @@ public class GUI extends JFrame {
 		}
 
 		public String getInfoString() {
-			return nameDataset+"("+nbCities+")_"+nameAlgo;
+			return nameDataset+"("+nbCities+")"+(algo!=null?"_"+algo.getClass().getSimpleName():"");
 		}
 
 		public String getFullInfoString() {
@@ -310,25 +308,23 @@ public class GUI extends JFrame {
 			String res = "";
 			res += "Dataset: "+nameDataset+"\n";
 			res += "Nb. of cities: "+nbCities+"\n";
-			res += "Algorithm: "+nameAlgo+"\n";
+			if (algo!=null) res += "Algorithm: "+algo.getClass().getSimpleName()+"\n";
 			
 			if (!isLoading) {
-				res += "Processing time: "+df.format(time)+"\n";
+				if (algo != null) {
+					double time = algo.lastExecTime();
+					if (time!=0.0) res += "Processing time: "+df.format(time)+"\n";
+				}
 				res += "Route length: "+routeLength+"\n";
-				res += "Improvement: "+(improvement==0?"...":improvement);
+				if (improvement!=0) res += "Improvement: "+(improvement==0?"...":improvement)+"\n";
+				if (algo != null) res += algo.getDetails();
 			}
 			
 			return res;
 		}
 
 		public void updateAlgo(Algo algo) {
-			if (algo!=null) {
-				nameAlgo = algo.getClass().getSimpleName();
-				time = algo.lastExecTime();
-			} else {
-				nameAlgo = "None";
-				time = 0.0;
-			}
+			this.algo = algo;
 			
 			double newRouteLength = TSPLib.routeLength(cities);
 			if (routeLength!=0) {
@@ -342,6 +338,7 @@ public class GUI extends JFrame {
 		public void updateDataset() {
 			nameDataset = Main.dataFiles[problem].getName();
 			nbCities = cities.size();
+			algo = null;
 			routeLength = TSPLib.routeLength(cities);
 			improvement = 0;
 			

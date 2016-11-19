@@ -4,8 +4,11 @@ import java.util.ArrayList;
 
 import main.City;
 import main.GUI;
+import main.TSPLib;
 
 public class TwoOpt extends Algo {
+	private int nbImprovements;
+	private int nbTests;
 
 	public TwoOpt(ArrayList<City> cities) {
 		super(cities);
@@ -13,8 +16,10 @@ public class TwoOpt extends Algo {
 
 	@SuppressWarnings("unchecked")
 	protected ArrayList<City> applyAlgo() {
+		nbImprovements = 0; nbTests = 0;
 		ArrayList<City> res = (ArrayList<City>) cities.clone();
 		res.add(res.get(0));
+		double routeLength = TSPLib.routeLength(res);
 		
 		boolean improvementMade;
 		do {
@@ -23,19 +28,32 @@ public class TwoOpt extends Algo {
 				if (!doProcess) break;
 				for (int j=i+1; j<res.size()-1; j++) {
 					if (!doProcess) break;
+					nbTests++;
+
+                    ArrayList<City> routeNew = swapOpt(res, i, j);
+                    double distNew = TSPLib.routeLength(routeNew);
 					
-					double dist_old = res.get(i).distance(res.get(i+1)) + res.get(j).distance(res.get(j+1));
-					double dist_new = res.get(i).distance(res.get(j+1)) + res.get(j).distance(res.get(i+1));
-					if (dist_new<dist_old) {
-						res = swapOpt(res, i, j);
-						System.out.println("Swap: \t"+i+", "+j+"\t Improvement: "+(dist_old-dist_new));
+					/*
+					// O-A, (A-X, X-B), B-Y
+					double distOld = res.get(i-1).distance(res.get(i)) + res.get(j).distance(res.get(j+1));
+					// O-B, (B-X, X-A), A-Y
+					double distNew = res.get(i-1).distance(res.get(j)) + res.get(i).distance(res.get(j+1));
+					double diff = distOld-distNew;
+					*/
+					double diff = routeLength-distNew;
+					if (diff>0) {
+						res = routeNew;
 						improvementMade = true;
+						nbImprovements++;
+						routeLength=distNew;
+						System.out.println("Swap: "+i+", "+j+"\t Improvement: "+diff+"     \t Route length: "+routeLength+"     \t\tCount: "+nbImprovements);
 						
 						GUI.getInstance().drawCities(res);
+						break;
 					}
 				}
+				if (improvementMade) break;
 			}
-			System.out.println("Finished loop.");
 		} while (improvementMade && doProcess);
 		
 		//*  // Remove closing line
@@ -55,5 +73,13 @@ public class TwoOpt extends Algo {
 		out.set(j, tmp);
 		
 		return out;
+	}
+	
+	@Override
+	public String getDetails() {
+		String res = super.getDetails();
+		res+= "Nb of tests: "+nbTests+"\n";
+		res+= "Nb of improvements: "+nbImprovements+"\n";
+		return res;
 	}
 }

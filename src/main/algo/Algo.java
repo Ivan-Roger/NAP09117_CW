@@ -65,5 +65,9 @@ public abstract class Algo extends Thread {
 		System.out.println(" -- INTERRUPTED PROCESSING !");
 		doProcess = false;
 	}
+	
+	public String getDetails() {
+		return "\n"+(doProcess?"":"INTERRUPTED!\n");
+	}
 
 }

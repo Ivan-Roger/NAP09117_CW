@@ -7,6 +7,7 @@ import main.City;
 import main.GUI;
 
 public class SolveIntersect extends Algo {
+	private int nbSolved;
 
 	public SolveIntersect(ArrayList<City> cities) {
 		super(cities);
@@ -14,6 +15,7 @@ public class SolveIntersect extends Algo {
 
 	@SuppressWarnings("unchecked")
 	protected ArrayList<City> applyAlgo() {
+		nbSolved = 0;
 		ArrayList<City> res = (ArrayList<City>) cities.clone();
 		
 		boolean intersectFound;
@@ -43,6 +45,7 @@ public class SolveIntersect extends Algo {
 					if (lineA.intersectsLine(lineB)) {
 						// Update the loop flag
 						intersectFound = true;
+						nbSolved++;
 						System.out.println("Intersect between "+i+" and "+j);
 						System.out.println("   Lines:\t "+startA.getID()+"-"+endA.getID()+"\t "+startB.getID()+"-"+endB.getID());
 						
@@ -61,6 +64,13 @@ public class SolveIntersect extends Algo {
 			}
 		} while (intersectFound && doProcess);
 		
+		return res;
+	}
+	
+	@Override
+	public String getDetails() {
+		String res = super.getDetails();
+		res+= "Interesct solved: "+nbSolved+"\n";
 		return res;
 	}
 }
