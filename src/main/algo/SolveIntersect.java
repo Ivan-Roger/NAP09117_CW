@@ -2,21 +2,22 @@ package main.algo;
 
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.List;
 
 import main.City;
-import main.GUI;
+import main.gui.GUI;
 
 public class SolveIntersect extends Algo {
 	private int nbSolved;
 
-	public SolveIntersect(ArrayList<City> cities) {
+	public SolveIntersect(List<City> cities) {
 		super(cities);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected ArrayList<City> applyAlgo() {
+	protected List<City> applyAlgo() {
 		nbSolved = 0;
-		ArrayList<City> res = (ArrayList<City>) cities.clone();
+		List<City> res = new ArrayList<>(cities);
 		
 		boolean intersectFound;
 		do {
@@ -70,7 +71,7 @@ public class SolveIntersect extends Algo {
 	@Override
 	public String getDetails() {
 		String res = super.getDetails();
-		res+= "Interesct solved: "+nbSolved+"\n";
+		res+= "Intersect solved: "+nbSolved+"\n";
 		return res;
 	}
 }

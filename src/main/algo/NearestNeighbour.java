@@ -1,16 +1,17 @@
 package main.algo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import main.City;
 
 public class NearestNeighbour extends Algo {
 
-	public NearestNeighbour(ArrayList<City> cities) {
+	public NearestNeighbour(List<City> cities) {
 		super(cities);
 	}
 
-	protected ArrayList<City> applyAlgo() {
+	protected List<City> applyAlgo() {
 		ArrayList<City> res = new ArrayList<>();
 		
 		City currentCity = cities.get(0);

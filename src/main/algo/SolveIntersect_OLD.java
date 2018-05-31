@@ -2,19 +2,20 @@ package main.algo;
 
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.List;
 
 import main.City;
-import main.GUI;
+import main.gui.GUI;
 
 public class SolveIntersect_OLD extends Algo {
 
-	public SolveIntersect_OLD(ArrayList<City> cities) {
+	public SolveIntersect_OLD(List<City> cities) {
 		super(cities);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected ArrayList<City> applyAlgo() {
-		ArrayList<City> res = (ArrayList<City>) cities.clone();
+	protected List<City> applyAlgo() {
+		List<City> res = new ArrayList<>(cities);
 		
 		boolean intersectFound = false;
 		do {

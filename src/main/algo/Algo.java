@@ -1,31 +1,32 @@
 package main.algo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import main.City;
-import main.GUI;
+import main.gui.GUI;
 import main.InvalidSizeEx;
 import main.TSPLib;
 
 public abstract class Algo extends Thread {
 	private int initialSize;
-	protected ArrayList<City> cities;
+	protected List<City> cities;
 	private double execTime;
 	protected boolean doProcess;
 	
 	@SuppressWarnings("unchecked")
-	public Algo(ArrayList<City> cities) {
-		this.cities = (ArrayList<City>) cities.clone();
+	public Algo(List<City> cities) {
+		this.cities = new ArrayList<>(cities);
 		this.initialSize = cities.size();
 	}
 	
 	public double lastExecTime() { return execTime; }
 	
-	abstract ArrayList<City> applyAlgo();
+	abstract List<City> applyAlgo();
 	
-	public ArrayList<City> process() throws InvalidSizeEx {
+	public List<City> process() throws InvalidSizeEx {
 		doProcess = true;
 		System.out.println("\n-------------------- "+this.getClass().getSimpleName()+" --------------------\n");
 		
@@ -42,7 +43,7 @@ public abstract class Algo extends Thread {
 		return cities;
 	}
 	
-	public ArrayList<City> getCities() {
+	public List<City> getCities() {
 		return cities;
 	}
 	

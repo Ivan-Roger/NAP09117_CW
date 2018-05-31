@@ -1,23 +1,24 @@
 package main.algo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import main.City;
-import main.GUI;
+import main.gui.GUI;
 import main.TSPLib;
 
 public class TwoOpt extends Algo {
 	private int nbImprovements;
 	private int nbTests;
 
-	public TwoOpt(ArrayList<City> cities) {
+	public TwoOpt(List<City> cities) {
 		super(cities);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected ArrayList<City> applyAlgo() {
+	protected List<City> applyAlgo() {
 		nbImprovements = 0; nbTests = 0;
-		ArrayList<City> res = (ArrayList<City>) cities.clone();
+		List<City> res = new ArrayList<>(cities);
 		res.add(res.get(0));
 		double routeLength = TSPLib.routeLength(res);
 		
@@ -30,7 +31,7 @@ public class TwoOpt extends Algo {
 					if (!doProcess) break;
 					nbTests++;
 
-                    ArrayList<City> routeNew = swapOpt(res, i, j);
+                    List<City> routeNew = swapOpt(res, i, j);
                     double distNew = TSPLib.routeLength(routeNew);
 					
 					/*
@@ -65,8 +66,8 @@ public class TwoOpt extends Algo {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<City> swapOpt(ArrayList<City> in, int i, int j) {
-		ArrayList<City> out = (ArrayList<City>) in.clone();
+	public static List<City> swapOpt(List<City> in, int i, int j) {
+		ArrayList<City> out = new ArrayList<>(in);
 		
 		City tmp = out.get(i);
 		out.set(i, out.get(j));

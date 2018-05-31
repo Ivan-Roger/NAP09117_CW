@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TSPLib {
 
@@ -71,7 +72,7 @@ public class TSPLib {
 		return result;
 	}
 	
-	public static double routeLength(ArrayList<City> cities){
+	public static double routeLength(List<City> cities){
 		//Calculate the length of a TSP route held in an ArrayList as a set of Points
 		double result=0;//Holds the route length
 		City prev = cities.get(cities.size()-1);
